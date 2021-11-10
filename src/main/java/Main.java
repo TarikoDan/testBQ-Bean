@@ -33,18 +33,18 @@ public class Main {
 //        Schema schema = dataFileReader.getSchema();
 //        System.out.println(schema); // this will print the schema for you
 
-/*
+
         // Read Avro-generated classes from files on GCS
         PCollection<Birth> records =
                 p.apply("(1) Read input Avro file",
                         AvroIO.read(Birth.class).from(inputFilePath));
-*/
+
 
         // Read GenericRecord's of the given schema from files on GCS
-        Schema schema = new Schema.Parser().parse(new File(inputFileSchema));
-        PCollection<GenericRecord> records =
-                p.apply(AvroIO.readGenericRecords(schema)
-                        .from("inputFilePath"));
+//        Schema schema = new Schema.Parser().parse(new File(inputFileSchema));
+//        PCollection<GenericRecord> records =
+//                p.apply(AvroIO.readGenericRecords(schema)
+//                        .from(inputFilePath));
 //
 //        PCollection<KV<String, Long>> wordCount = p
 //                .apply("(1) Read all lines",
@@ -69,10 +69,10 @@ public class Main {
 //
 //        p.run().waitUntilFinish();
 
-        records.apply(ParDo.of(new DoFn<GenericRecord, String>() {
+        records.apply(ParDo.of(new DoFn<Birth, String>() {
                             @ProcessElement
                             public void processElement(@Element ProcessContext c) {
-                                GenericRecord name = c.element();
+                                Birth name = c.element();
                                 c.output(name.toString());
                                 System.out.println(name);
                             }

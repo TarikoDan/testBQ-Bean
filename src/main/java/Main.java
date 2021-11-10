@@ -44,7 +44,7 @@ public class Main {
         Schema schema = new Schema.Parser().parse(new File(inputFileSchema));
         PCollection<GenericRecord> records =
                 p.apply(AvroIO.readGenericRecords(schema)
-                        .from("inputFilePath"));
+                        .from(inputFilePath));
 //
 //        PCollection<KV<String, Long>> wordCount = p
 //                .apply("(1) Read all lines",
@@ -69,22 +69,28 @@ public class Main {
 //
 //        p.run().waitUntilFinish();
 
-        records.apply(ParDo.of(new DoFn<GenericRecord, String>() {
-                            @ProcessElement
-                            public void processElement(@Element ProcessContext c) {
-                                GenericRecord name = c.element();
-                                c.output(name.toString());
-                                System.out.println(name);
-                            }
-                        })
-                );
+//        records.apply(ParDo.of(new DoFn<GenericRecord, String>() {
+//                            @ProcessElement
+//                            public void processElement(@Element ProcessContext c) {
+//                                GenericRecord name = c.element();
+//                                c.output(name.toString());
+//                                System.out.println(name);
+//                            }
+//                        })
+//                );
 
+
+        records.apply(
+                "Preview Result",
+                MapElements.into(TypeDescriptors.strings())
+                        .via(
+                                x -> {
+                                    System.out.println(x);
+                                    return "";
+                                }));
 
         p.run().waitUntilFinish();
 
     }
 
-    private static boolean isStopWord(String word) {
-        return false;
-    }
 }

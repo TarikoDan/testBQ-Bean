@@ -3,14 +3,14 @@ import java.util.Objects;
 public class Birth {
     String state;
     String gender;
-    Integer year;
+    Long year;
     String name;
-    Integer number;
+    Long number;
 
     public Birth() {
     }
 
-    public Birth(String state, String gender, Integer year, String name, Integer number) {
+    public Birth(String state, String gender, Long year, String name, Long number) {
         this.state = state;
         this.gender = gender;
         this.year = year;

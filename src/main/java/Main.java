@@ -19,11 +19,11 @@ import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Birth birth = new Birth("Flor", "M", 1992, "name", 12);
+        Birth birth = new Birth("Flor", "M", 1992L, "name", 12L);
         PipelineOptions options = PipelineOptionsFactory.create();
         Pipeline p = Pipeline.create(options);
 
-        String inputFilePath = "src/main/resources/avrousnames.avro";
+        String inputFilePath = "src/main/resources/usnames10.avro";
         String inputFileSchema = "src/main/resources/schema.avsc";
         String outputFilePath = "src/main/resources/output/res";
 
@@ -69,15 +69,22 @@ public class Main {
 //
 //        p.run().waitUntilFinish();
 
-        records.apply(ParDo.of(new DoFn<Birth, String>() {
-                            @ProcessElement
-                            public void processElement(@Element ProcessContext c) {
-                                Birth name = c.element();
-                                c.output(name.toString());
-                                System.out.println(name);
-                            }
-                        })
-                );
+//        records.apply(ParDo.of(new DoFn<Birth, String>() {
+//                            @ProcessElement
+//                            public void processElement(@Element ProcessContext c) {
+//                                Birth name = c.element();
+//                                c.output(name.toString());
+//                                System.out.println(name);
+//                            }
+//                        }));
+        records.apply(MapElements.via(
+                new SimpleFunction<Birth, String>() {
+                    @Override
+                    public String apply(Birth line) {
+                        System.out.println(line);
+                        return "";
+                    }
+                }));
 
 
         p.run().waitUntilFinish();

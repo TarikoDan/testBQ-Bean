@@ -7,6 +7,9 @@ public class Birth {
     String name;
     Integer number;
 
+    public Birth() {
+    }
+
     public Birth(String state, String gender, Integer year, String name, Integer number) {
         this.state = state;
         this.gender = gender;

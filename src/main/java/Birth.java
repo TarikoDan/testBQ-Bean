@@ -5,6 +5,15 @@ public class Birth {
     String gender;
     Integer year;
     String name;
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
     Integer number;
 
     public Birth() {

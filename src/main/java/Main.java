@@ -16,16 +16,18 @@ import org.apache.beam.sdk.values.TypeDescriptors;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Random;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Birth birth = new Birth("Flor", "M", 1992, "name", 12);
         PipelineOptions options = PipelineOptionsFactory.create();
         Pipeline p = Pipeline.create(options);
 
-        String inputFilePath = "src/main/resources/avrousnames.avro";
+//        String inputFilePath = "src/main/resources/avrousnames.avro";
+        String inputFilePath = "src/main/resources/usnames100.avro";
         String inputFileSchema = "src/main/resources/schema.avsc";
         String outputFilePath = "src/main/resources/output/res";
+
 
 //        // Read Avro-Schema from file GCS
 //        DatumReader<GenericRecord> datumReader = new GenericDatumReader<>();
@@ -79,8 +81,21 @@ public class Main {
 //                        })
 //                );
 
+        PCollection<KV<String, GenericRecord>> trans =
+                records
+//                        .apply(Filter.by(input -> input.get("state").toString().equals("AL")))
+                        .apply(WithKeys.of(new SimpleFunction<GenericRecord, String>() {
+                            @Override
+                            public String apply(GenericRecord s) {
+                                return s.get("year").toString();
+                        }}));
 
-        records.apply(
+        PCollection<KV<String, Iterable<GenericRecord>>> groupped =
+                trans.apply("group", GroupByKey.<String, GenericRecord>create());
+
+
+        groupped
+                .apply(
                 "Preview Result",
                 MapElements.into(TypeDescriptors.strings())
                         .via(

@@ -42,6 +42,7 @@ public class PopularUsNames {
                         }}));
 
         // Calculating the most popular name for each year
+
         // 1-st VAR : [GroupByKey -> Combine.groupedValues]
 //        PCollection<KV<String, Iterable<GenericRecord>>> grouped =
 //                keyedByYear.apply("group", GroupByKey.<String, GenericRecord>create());

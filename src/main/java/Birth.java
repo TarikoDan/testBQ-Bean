@@ -1,5 +1,10 @@
+import org.apache.beam.sdk.schemas.JavaFieldSchema;
+import org.apache.beam.sdk.schemas.annotations.DefaultSchema;
+import org.apache.beam.sdk.schemas.annotations.SchemaCreate;
+
 import java.util.Objects;
 
+@DefaultSchema(JavaFieldSchema.class)
 public class Birth {
     String state;
     String gender;
@@ -19,6 +24,7 @@ public class Birth {
     public Birth() {
     }
 
+    @SchemaCreate
     public Birth(String state, String gender, Integer year, String name, Integer number) {
         this.state = state;
         this.gender = gender;

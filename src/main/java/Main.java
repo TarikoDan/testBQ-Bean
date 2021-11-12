@@ -1,8 +1,3 @@
-import org.apache.avro.Schema;
-import org.apache.avro.file.DataFileReader;
-import org.apache.avro.generic.GenericDatumReader;
-import org.apache.avro.generic.GenericRecord;
-import org.apache.avro.io.DatumReader;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.AvroIO;
 import org.apache.beam.sdk.io.TextIO;
@@ -15,11 +10,9 @@ import org.apache.beam.sdk.values.TypeDescriptors;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Birth birth = new Birth("Flor", "M", 1992L, "name", 12L);
         PipelineOptions options = PipelineOptionsFactory.create();
         Pipeline p = Pipeline.create(options);
 
@@ -46,28 +39,6 @@ public class Main {
 //                p.apply(AvroIO.readGenericRecords(schema)
 //                        .from(inputFilePath));
 //
-//        PCollection<KV<String, Long>> wordCount = p
-//                .apply("(1) Read all lines",
-//                        TextIO.read().from(inputFilePath))
-//                .apply("(2) Flatmap to a list of words",
-//                        FlatMapElements.into(TypeDescriptors.strings())
-//                                .via(line -> Arrays.asList(line.split("\\s"))))
-//                .apply("(3) Lowercase all",
-//                        MapElements.into(TypeDescriptors.strings())
-//                                .via(word -> word.toLowerCase()))
-//                .apply("(4) Trim punctuations",
-//                        MapElements.into(TypeDescriptors.strings())
-//                                .via(word -> word.trim()))
-//                .apply("(5) Filter stopwords",
-//                        Filter.by(word -> !isStopWord(word)))
-//                .apply("(6) Count words",
-//                        Count.perElement());
-//
-//        wordCount.apply(MapElements.into(TypeDescriptors.strings())
-//                        .via(count -> count.getKey() + " --> " + count.getValue()))
-//                .apply(TextIO.write().to(outputFilePath));
-//
-//        p.run().waitUntilFinish();
 
 //        records.apply(ParDo.of(new DoFn<Birth, String>() {
 //                            @ProcessElement
@@ -91,7 +62,4 @@ public class Main {
 
     }
 
-    private static boolean isStopWord(String word) {
-        return false;
-    }
 }

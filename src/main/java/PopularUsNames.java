@@ -14,12 +14,11 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
-public class Main {
+public class PopularUsNames {
     public static void main(String[] args) throws IOException {
         PipelineOptions options = PipelineOptionsFactory.create();
         Pipeline p = Pipeline.create(options);
 
-//        String inputFilePath = "src/main/resources/avrousnames.avro";
         String inputFilePath = "src/main/resources/usnames100.avro";
         String inputFileSchema = "src/main/resources/schema.avsc";
         String outputFilePath = "src/main/resources/output/mostPopularNames";

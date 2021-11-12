@@ -2,6 +2,7 @@ import org.apache.avro.Schema;
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.generic.IndexedRecord;
 import org.apache.avro.io.DatumReader;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.AvroIO;
@@ -15,11 +16,13 @@ import org.apache.beam.sdk.values.TypeDescriptors;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Random;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static <T> void main(String[] args) throws IOException {
         PipelineOptions options = PipelineOptionsFactory.create();
         Pipeline p = Pipeline.create(options);
 
@@ -81,6 +84,11 @@ public class Main {
 //                        })
 //                );
 
+
+        PCollection<GenericRecord> filtered = records
+                .apply(Filter.by(input -> input.get("year").toString().equals("1954")));
+
+
         PCollection<KV<String, GenericRecord>> trans =
                 records
 //                        .apply(Filter.by(input -> input.get("state").toString().equals("AL")))
@@ -90,11 +98,20 @@ public class Main {
                                 return s.get("year").toString();
                         }}));
 
-        PCollection<KV<String, Iterable<GenericRecord>>> groupped =
-                trans.apply("group", GroupByKey.<String, GenericRecord>create());
+        PCollection<KV<String, GenericRecord>> combined =
+                trans.apply(Combine.perKey(
+                        Min.of(new GenComparator())));
+
+        PCollection<GenericRecord> res = combined.apply(Values.create());
+
+//        PCollection<KV<String, Iterable<GenericRecord>>> grouped =
+//                trans.apply("group", GroupByKey.<String, GenericRecord>create());
+//        PCollection<KV<String, GenericRecord>> groupedValues = grouped.apply(Combine.groupedValues(
+//                Max.of(new GenComparator())
+//        ));
 
 
-        groupped
+        res
                 .apply(
                 "Preview Result",
                 MapElements.into(TypeDescriptors.strings())
@@ -106,6 +123,16 @@ public class Main {
 
         p.run().waitUntilFinish();
 
+    }
+
+    static class GenComparator implements Comparator<GenericRecord>, Serializable {
+
+        @Override
+        public int compare(GenericRecord o1, GenericRecord o2) {
+            int number1 = ((Number) o1.get("number")).intValue();
+            int number2 = ((Number) o2.get("number")).intValue();
+            return Integer.compare(number2, number1);
+        }
     }
 
 }

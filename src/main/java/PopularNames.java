@@ -6,17 +6,23 @@ import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.apache.beam.sdk.transforms.*;
 import org.apache.beam.sdk.values.*;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Comparator;
 
 public class PopularNames {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         PipelineOptions options = PipelineOptionsFactory.create();
         System.out.println(options.getRunner());
         Pipeline p = Pipeline.create(options);
 
+        String bucketName = "bq-beam";
+        String objectName= "usnames100.avro";
+        String inputFilePath = "src/main/resources/" + objectName;
+        GCStorage.downloadFile(bucketName, objectName, inputFilePath);
+
 //        String inputFilePath = "src/main/resources/avrousnames.avro";
-        String inputFilePath = "src/main/resources/usnames100.avro";
+//        String inputFilePath = "src/main/resources/usnames100.avro";
         String outputFilePath = "src/main/resources/output/popularNamesRecords";
 
         // Read Avro-generated classes from files on GCS

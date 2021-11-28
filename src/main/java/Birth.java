@@ -1,14 +1,10 @@
-import org.apache.beam.sdk.coders.AvroCoder;
-import org.apache.beam.sdk.coders.DefaultCoder;
 import org.apache.beam.sdk.schemas.JavaBeanSchema;
-import org.apache.beam.sdk.schemas.JavaFieldSchema;
 import org.apache.beam.sdk.schemas.annotations.DefaultSchema;
 import org.apache.beam.sdk.schemas.annotations.SchemaCreate;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-//@DefaultCoder(AvroCoder.class)
 @DefaultSchema(JavaBeanSchema.class)
 //@DefaultSchema(JavaFieldSchema.class)
 public class Birth implements Serializable {

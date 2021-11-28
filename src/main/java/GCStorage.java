@@ -11,11 +11,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class GCStorage {
-    private static final String keyFile = "C:/Users/Taras_Danylyshyn/Documents/EquiFax/Task1_BQ-Bean/Keys/test-bq-331608-f6f571f4b2c0.json";
+    private static final String keyFile = "C:/Users/Taras_Danylyshyn/Documents/EquiFax/Task1_BQ-Bean/Keys/...";
     private static final String projectId = "test-bq-331608";
 
     private static Storage storage;
-
 
     static {
         try {
@@ -36,20 +35,13 @@ public class GCStorage {
         String objectName= "upload/usnames10.avro";
         String destFilePath = "src/main/resources/names10.avro";
         String objFilePath = "C:/Users/Taras_Danylyshyn/Documents/EquiFax/Task1_BQ-Bean/usnames10.avro";
-//        createBucketWithCred(projectId, bucketName);
-//        uploadObject(projectId, bucketName, objectName, objFilePath);
+        createBucket(bucketName);
+        uploadObject(bucketName, objectName, objFilePath);
         downloadFile(bucketName, objectName, destFilePath);
 
     }
 
     public static void createBucket(String bucketName) {
-        Bucket bucket = storage.create(BucketInfo.of(bucketName));
-//        Bucket bucket = storage.create(BucketInfo.newBuilder(bucketName).build());
-
-        System.out.println("Created bucket " + bucket.getName());
-    }
-
-    public static void createBucketWithCred(String bucketName) {
         Bucket bucket = storage.create(BucketInfo.of(bucketName));
 //        Bucket bucket = storage.create(BucketInfo.newBuilder(bucketName).build());
 

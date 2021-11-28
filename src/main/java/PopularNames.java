@@ -1,29 +1,48 @@
+import org.apache.beam.runners.dataflow.DataflowRunner;
+import org.apache.beam.runners.direct.DirectRunner;
+import org.apache.beam.runners.dataflow.options.DataflowPipelineOptions;
 import org.apache.beam.sdk.Pipeline;
+import org.apache.beam.sdk.PipelineRunner;
 import org.apache.beam.sdk.io.AvroIO;
 import org.apache.beam.sdk.io.TextIO;
-import org.apache.beam.sdk.options.PipelineOptions;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.apache.beam.sdk.transforms.*;
 import org.apache.beam.sdk.values.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Comparator;
 
 public class PopularNames {
+    private static final String PROJECT_ID = "bq-beam-test-project";
+    private static final String BUCKET_NAME = "gs://bq-beam-main/";
+    public static final Logger LOG = LoggerFactory.getLogger(PopularNames.class);
+
     public static void main(String[] args) {
-        PipelineOptions options = PipelineOptionsFactory.create();
-        System.out.println(options.getRunner());
+        DataflowPipelineOptions options = PipelineOptionsFactory.as(DataflowPipelineOptions.class);
+//        PipelineOptions o = PipelineOptionsFactory.create();
+
+        options.setProject(PROJECT_ID);
+        options.setTempLocation(BUCKET_NAME + "Temp");
+        options.setRunner(DataflowRunner.class);
+//        options.setRunner(DirectRunner.class);
+        options.setRegion("europe-central2");
+        options.setJobName("process-avro-to-csv2");
+        LOG.info("Will be run with " + options.getRunner().getName());
+
+
         Pipeline p = Pipeline.create(options);
 
-        String inputFilePath = "gs://bq-beam/usnames100.avro";
-        String outputFilePath = "gs://bq-beam/output/popularNamesRecords";
+        String inputFilePath = BUCKET_NAME + "Input/top100NumbersUsNames.avro";
+        String outputFilePath = BUCKET_NAME + "output/popularNamesRecords";
 
         // Read Avro-generated classes from files on GCS
         PCollection<Birth> records =
                 p.apply("(1) Read input Avro file",
                         AvroIO.read(Birth.class).from(inputFilePath).withBeamSchemas(true));
 
-        System.out.println("hasSchema? -> " + records.hasSchema());
+        System.out.println("Has input Collections Schema? -> " + records.hasSchema());
 
         PCollection<KV<Long, Birth>> birthsPerYear =
                 records.apply("add key by Year to records",
@@ -61,7 +80,7 @@ public class PopularNames {
         records.apply("Preview Result",
                 MapElements.into(TypeDescriptors.strings())
                         .via(rec -> {
-                                    System.out.println(rec);
+                                    LOG.info(rec.toString());
                                     return "";
                                 }
                         ));

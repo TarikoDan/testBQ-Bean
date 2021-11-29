@@ -2,7 +2,6 @@ import org.apache.beam.runners.dataflow.DataflowRunner;
 import org.apache.beam.runners.direct.DirectRunner;
 import org.apache.beam.runners.dataflow.options.DataflowPipelineOptions;
 import org.apache.beam.sdk.Pipeline;
-import org.apache.beam.sdk.PipelineRunner;
 import org.apache.beam.sdk.io.AvroIO;
 import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
@@ -35,7 +34,7 @@ public class PopularNames {
         Pipeline p = Pipeline.create(options);
 
         String inputFilePath = BUCKET_NAME + "Input/top100NumbersUsNames.avro";
-        String outputFilePath = BUCKET_NAME + "output/popularNamesRecords";
+        String outputFilePath = BUCKET_NAME + "output/wrongResult";
 
         // Read Avro-generated classes from files on GCS
         PCollection<Birth> records =

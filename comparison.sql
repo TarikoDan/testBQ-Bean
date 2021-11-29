@@ -13,6 +13,12 @@ CREATE TEMP TABLE origin AS
  UNION ALL
  SELECT COUNT(*), "Result Data" FROM result.PopularNames100;
 
+
+ ASSERT
+     ((SELECT COUNT(*) FROM origin) = (SELECT COUNT(*) FROM result.PopularNames100))
+     AS 'Tables must contain equal number of rows.';
+
+
 -- The Best way. Visual comparison by Row
  SELECT * FROM (
      origin o

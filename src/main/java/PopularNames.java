@@ -24,14 +24,13 @@ public class PopularNames {
         DataflowPipelineOptions options = PipelineOptionsFactory.as(DataflowPipelineOptions.class);
 
         options.setProject(Util.PROJECT_ID);
-        options.setTempLocation(Util.BUCKET_NAME + "Temp");
+        options.setTempLocation(Util.BUCKET_URI + "Temp");
         options.setRunner(runnerClazz);
         options.setRegion("europe-central2");
         options.setJobName("process-avro-to-csv2");
         LOG.info("Will be run with " + options.getRunner().getName());
         FileSystems.setDefaultPipelineOptions(options);
         GCStorage.checkStorage();
-//        GCStorage.checkDefaultStorage();
         return Pipeline.create(options);
     }
 

@@ -34,13 +34,13 @@ public class GCStorage {
     }
 
     public static void main(String[] args) throws IOException {
-        String bucketName = "bq-beam-bucket";
-        String objectName= "upload/usNames10.avro";
-        String srcFilePath = "src/main/resources/usNames10.avro";
-        String destFilePath = "src/main/resources/dest/usNames10.avro";
-        createBucket(bucketName);
-        uploadObject(bucketName, objectName, srcFilePath);
-        downloadFile(bucketName, objectName, destFilePath);
+        String objectName= "Output/mostPopularNames.csv";
+        String srcFilePath = "src/main/resources/top100NumbersUsNames.avro";
+        String destFilePath = "src/main/resources/Output/mostPopularNames.csv";
+        checkStorage();
+        createBucket(Util.BUCKET_NAME);
+        uploadObject(Util.BUCKET_NAME, objectName, srcFilePath);
+        downloadFile(Util.BUCKET_NAME, Util.RESULT_OBJECT, destFilePath);
 
     }
 
@@ -63,6 +63,7 @@ public class GCStorage {
 
     public static void downloadFile(String bucketName, String srcFilename, String destFilePath) {
         Blob blob = storage.get(BlobId.of(bucketName, srcFilename));
+        assert blob != null;
         blob.downloadTo(Paths.get(destFilePath));
         LOG.info("Downloaded object " + srcFilename
                 + " from bucket name " + bucketName

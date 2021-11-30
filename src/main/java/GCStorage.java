@@ -102,7 +102,7 @@ public class GCStorage {
     }
 
     public static void checkStorage() {
-        System.out.println("Buckets:");
+        System.out.println("Buckets in Project " + Util.PROJECT_ID + ":");
         Page<Bucket> buckets = storage.list();
         for (Bucket bucket : buckets.iterateAll()) {
             System.out.println(bucket.toString());

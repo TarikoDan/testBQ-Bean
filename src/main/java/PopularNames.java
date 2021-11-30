@@ -31,7 +31,7 @@ public class PopularNames {
         LOG.info("Will be run with " + options.getRunner().getName());
         FileSystems.setDefaultPipelineOptions(options);
         GCStorage.checkStorage();
-        GCStorage.checkDefaultStorage();
+//        GCStorage.checkDefaultStorage();
         return Pipeline.create(options);
     }
 

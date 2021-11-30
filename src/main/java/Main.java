@@ -6,13 +6,11 @@ import org.apache.beam.sdk.values.PCollection;
 
 public class Main {
     public static void main(String[] args) {
-        Pipeline p = PopularNames.createPipeline(DirectRunner.class);
-//        Pipeline p = PopularNames.createPipeline(DataflowRunner.class);
+//        Pipeline p = PopularNames.createPipeline(DirectRunner.class);
+        Pipeline p = PopularNames.createPipeline(DataflowRunner.class);
 
         String inputFilePath = Util.BUCKET_NAME + "Input/top100NumbersUsNames.avro";
-        String outputFilePath = Util.BUCKET_NAME + "output/mostPopularNames";
-//        String inputFilePath = "src/main/resources/" + "Input/top100NumbersUsNames.avro";
-//        String outputFilePath = "src/main/resources/" + "output/mostPopularNames";
+        String outputFilePath = Util.BUCKET_NAME + "Output/mostPopularNames";
 
         // Read Avro-generated classes from files on GCS
         PCollection<Birth> records = PopularNames.readAvro(p, inputFilePath);

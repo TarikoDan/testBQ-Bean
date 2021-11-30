@@ -2,6 +2,7 @@ import org.apache.beam.runners.dataflow.options.DataflowPipelineOptions;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.PipelineRunner;
 import org.apache.beam.sdk.io.AvroIO;
+import org.apache.beam.sdk.io.FileSystems;
 import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.apache.beam.sdk.transforms.*;
@@ -17,19 +18,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PopularNames {
-    private static final String PROJECT_ID = "bq-beam-test-project";
-    public static final String BUCKET_NAME = "gs://bq-beam-test/";
     public static final Logger LOG = LoggerFactory.getLogger(PopularNames.class);
 
     public static Pipeline createPipeline(Class<? extends PipelineRunner<?>> runnerClazz) {
         DataflowPipelineOptions options = PipelineOptionsFactory.as(DataflowPipelineOptions.class);
 
-        options.setProject(PROJECT_ID);
-        options.setTempLocation(BUCKET_NAME + "Temp");
+        options.setProject(Util.PROJECT_ID);
+        options.setTempLocation(Util.BUCKET_NAME + "Temp");
         options.setRunner(runnerClazz);
         options.setRegion("europe-central2");
         options.setJobName("process-avro-to-csv2");
         LOG.info("Will be run with " + options.getRunner().getName());
+        FileSystems.setDefaultPipelineOptions(options);
+        GCStorage.checkStorage();
+        GCStorage.checkDefaultStorage();
         return Pipeline.create(options);
     }
 
@@ -63,12 +65,8 @@ public class PopularNames {
     }
 
     public static void writeToCSV(PCollection<String> records, String outputFilePath) {
-        List<String> fieldNames = Arrays
-                .stream(Birth.class.getFields())
-                .map(Field::getName)
-                .collect(Collectors.toList());
-        String header = String.join(",", fieldNames);
-        records.apply(TextIO
+        String header = header();
+         records.apply(TextIO
                 .write()
                 .to(outputFilePath)
                 .withHeader(header)
@@ -81,6 +79,14 @@ public class PopularNames {
                         .via(rec -> {LOG.info(rec.toString());
                                     return "";}
                         ));
+    }
+
+    public static String header() {
+        List<String> fieldNames = Arrays
+                .stream(Birth.class.getFields())
+                .map(Field::getName)
+                .collect(Collectors.toList());
+        return String.join(",", fieldNames);
     }
 
     static class BirthComparator implements Comparator<Birth>, Serializable {

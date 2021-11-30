@@ -1,3 +1,4 @@
+import com.google.api.gax.paging.Page;
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.Identity;
@@ -16,20 +17,17 @@ import java.nio.file.Paths;
  * Created for educational purposes and is not used in current task.
  */
 public class GCStorage {
-    private static final String keyFile = "C:/Users/Taras_Danylyshyn/Documents/EquiFax/Task1_BQ-Bean/Keys/...";
-    private static final String projectId = "test-bq-331608";
     public static final Logger LOG = LoggerFactory.getLogger(PopularNames.class);
-
     private static Storage storage;
 
     static {
         try {
             Credentials credentials = GoogleCredentials
-                    .fromStream(new FileInputStream(keyFile));
+                    .fromStream(new FileInputStream(Util.KEY_FILE));
             storage = StorageOptions.newBuilder()
                     .setCredentials(credentials)
-                    .setProjectId(projectId).build().getService();
-            LOG.info("Connected to Storage of Project " + projectId);
+                    .setProjectId(Util.PROJECT_ID).build().getService();
+            LOG.info("Connected to Storage of Project " + Util.PROJECT_ID);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -92,6 +90,23 @@ public class GCStorage {
                         .build());
 
         LOG.info("Bucket " + bucketName + " is now publicly readable");
+    }
+
+    public static void checkDefaultStorage() {
+        Storage storage = StorageOptions.getDefaultInstance().getService();
+        System.out.println("Buckets in default Storage:");
+        Page<Bucket> buckets = storage.list();
+        for (Bucket bucket : buckets.iterateAll()) {
+            System.out.println(bucket.toString());
+        }
+    }
+
+    public static void checkStorage() {
+        System.out.println("Buckets:");
+        Page<Bucket> buckets = storage.list();
+        for (Bucket bucket : buckets.iterateAll()) {
+            System.out.println(bucket.toString());
+        }
     }
 
 }

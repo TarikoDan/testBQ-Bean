@@ -23,7 +23,7 @@ public class PopularNamesTest {
     @Test
     public void testMinimalWordCount() {
         LOG.debug("start testing");
-        String inputFilePath = "src/main/resources/usnames100.avro";
+        String inputFilePath = "src/main/resources/top100NumbersUsNames.avro";
 
         final Birth birth2 = new Birth("CA", "M", 1991L, "Michael", 7573L);
 
